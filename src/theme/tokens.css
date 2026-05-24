@@ -9,6 +9,8 @@ html[data-theme='cute'] {
   --color-border: #f3c5d6;
   --color-nav-bg: #fff7fb;
   --color-nav-active: #ffe0ec;
+  --color-success: #2d9c6e;
+  --color-danger: #e53e3e;
   --radius-base: 18px;
   --radius-card: 28px;
   --font-size-base: 16px;
@@ -24,6 +26,8 @@ html[data-theme='cool'] {
   --color-border: #294556;
   --color-nav-bg: #111d28;
   --color-nav-active: #173447;
+  --color-success: #4ade80;
+  --color-danger: #f87171;
   --radius-base: 14px;
   --radius-card: 20px;
   --font-size-base: 16px;
@@ -40,6 +44,8 @@ html[data-theme='minimal'] {
   --color-border: #d9e1e8;
   --color-nav-bg: #ffffff;
   --color-nav-active: #edf4fc;
+  --color-success: #2d9c6e;
+  --color-danger: #e53e3e;
   --radius-base: 12px;
   --radius-card: 18px;
   --font-size-base: 16px;

@@ -137,8 +137,11 @@ export default function Settings() {
         </section>
 
         <section>
-          <h2>AI Key</h2>
-          <p>这里会放本地保存、删除和开关 AI 功能的入口（M3 实现）。</p>
+          <h2>AI Key <small style={{ fontWeight: 400, fontSize: '0.8em', color: 'var(--color-text-muted)' }}>Coming Soon</small></h2>
+          <p>AI 助手功能即将上线。届时可以在这里输入 API Key，本地保存，随时删除。</p>
+          <p style={{ fontSize: '0.85em', color: 'var(--color-text-muted)' }}>
+            <small>AI Helper is coming soon. You'll be able to store and remove your API key locally here.</small>
+          </p>
         </section>
       </div>
     </section>

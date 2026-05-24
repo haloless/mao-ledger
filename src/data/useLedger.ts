@@ -122,26 +122,26 @@ export function usePlanVsActual(month: string = toMonthKey()): PlanVsActual | nu
 
 // ─── Transactions Hook ─────────────────────────────────────────────────────────
 
-export function useTransactions(month: string = toMonthKey()): Transaction[] {
+export function useTransactions(month: string = toMonthKey(), refreshKey = 0): Transaction[] {
   return useLiveQuery(
     () => db.transactions.where('month').equals(month).sortBy('date'),
     [],
-    [month],
+    [month, refreshKey],
   );
 }
 
 // ─── Plans Hook ───────────────────────────────────────────────────────────────
 
-export function useMonthlyPlan(month: string = toMonthKey()): MonthlyPlan | null {
+export function useMonthlyPlan(month: string = toMonthKey(), refreshKey = 0): MonthlyPlan | null {
   return useLiveQuery(
     async () => (await db.monthlyPlans.get(month)) ?? null,
     null,
-    [month],
+    [month, refreshKey],
   );
 }
 
 // ─── Contracts Hook ───────────────────────────────────────────────────────────
 
-export function useContracts(): Contract[] {
-  return useLiveQuery(() => db.contracts.toArray(), [], []);
+export function useContracts(refreshKey = 0): Contract[] {
+  return useLiveQuery(() => db.contracts.toArray(), [], [refreshKey]);
 }
