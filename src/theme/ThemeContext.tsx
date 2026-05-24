@@ -18,10 +18,14 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function getInitialTheme(): Theme {
-  const savedTheme = window.localStorage.getItem(STORAGE_KEY);
-  return savedTheme === 'cute' || savedTheme === 'cool' || savedTheme === 'minimal'
-    ? savedTheme
-    : 'cute';
+  try {
+    const savedTheme = window.localStorage?.getItem(STORAGE_KEY);
+    return savedTheme === 'cute' || savedTheme === 'cool' || savedTheme === 'minimal'
+      ? savedTheme
+      : 'cute';
+  } catch {
+    return 'cute';
+  }
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -29,7 +33,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    window.localStorage.setItem(STORAGE_KEY, theme);
+    try {
+      window.localStorage?.setItem(STORAGE_KEY, theme);
+    } catch {
+      // localStorage unavailable in some environments (e.g. test, private mode)
+    }
   }, [theme]);
 
   const value = useMemo(() => ({ theme, setTheme }), [theme]);
