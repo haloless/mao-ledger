@@ -15,8 +15,8 @@
 
 本次先完成项目起步文档与技术路线定义：
 
-- 基础设计文档：`/home/runner/work/mao-ledger/mao-ledger/docs/design.md`
-- Copilot 开发指引：`/home/runner/work/mao-ledger/mao-ledger/.github/copilot-instructions.md`
+- 基础设计文档：`docs/design.md`
+- Copilot 开发指引：`.github/copilot-instructions.md`
 
 ## 技术路线（MVP）
 

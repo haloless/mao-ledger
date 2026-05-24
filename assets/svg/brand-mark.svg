@@ -1,0 +1,15 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="24" y="32" width="208" height="200" rx="48" fill="#FFF3B0"/>
+  <path d="M76 66L100 96H68L76 66Z" fill="#FF9AA2"/>
+  <path d="M180 66L188 96H156L180 66Z" fill="#FF9AA2"/>
+  <rect x="64" y="84" width="128" height="132" rx="32" fill="#FFFFFF" stroke="#2F3A56" stroke-width="8"/>
+  <rect x="92" y="112" width="72" height="88" rx="12" fill="#D9F4FF" stroke="#2F3A56" stroke-width="6"/>
+  <path d="M108 132H148" stroke="#2F3A56" stroke-width="6" stroke-linecap="round"/>
+  <path d="M108 148H148" stroke="#2F3A56" stroke-width="6" stroke-linecap="round"/>
+  <path d="M108 164H136" stroke="#2F3A56" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="178" cy="166" r="26" fill="#FFD166" stroke="#2F3A56" stroke-width="6"/>
+  <path d="M178 152V180" stroke="#2F3A56" stroke-width="6" stroke-linecap="round"/>
+  <path d="M164 166H192" stroke="#2F3A56" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="104" cy="108" r="6" fill="#2F3A56"/>
+  <circle cx="152" cy="108" r="6" fill="#2F3A56"/>
+</svg>
