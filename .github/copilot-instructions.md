@@ -23,6 +23,7 @@ Core modules:
 - Keep UI simple and kid-friendly.
 - Provide multiple visual styles/themes (cute / cool / minimal).
 - Use short, encouraging language.
+- Use bilingual UI copy: Chinese as primary text with small English subtitle under the Chinese line.
 
 ## Engineering Guidance
 
