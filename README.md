@@ -13,10 +13,13 @@
 
 ## 当前交付内容
 
-本次先完成项目起步文档与技术路线定义：
+当前仓库已经包含可运行的前端 MVP 骨架与项目文档：
 
 - 基础设计文档：`docs/design.md`
+- 项目管理文档：`docs/project-manager.md`
 - Copilot 开发指引：`.github/copilot-instructions.md`
+- React + TypeScript + Vite 前端工程：`src/`
+- 本地数据层（IndexedDB / Dexie）、导入导出、主题切换、核心页面与测试基线
 
 ## 技术路线（MVP）
 
@@ -45,10 +48,59 @@
    - 复盘消费习惯
    - 辅助判断“是否需要花这笔钱”
 
-## 后续开发建议
+## 本地浏览器试用
 
-1. 初始化前端工程（如 Vite + React + TypeScript）
-2. 完成本地数据层（Dexie/IndexedDB）
-3. 实现四大页面与主题系统
-4. 接入 AI 对话模块与提示词模板
-5. 做儿童易用性优化（大按钮、图标化、正向反馈文案）
+### 环境要求
+
+- Node.js 18+（建议 LTS）
+- npm 9+
+
+### 启动步骤
+
+1. 安装依赖：
+
+   ```bash
+   npm install
+   ```
+
+2. 启动本地开发服务器：
+
+   ```bash
+   npm run dev
+   ```
+
+3. 在浏览器打开终端里显示的本地地址，通常是：
+
+   ```text
+   http://localhost:5173
+   ```
+
+4. 建议按这个顺序试用：
+   - 先去 **共识契约 Contract** 新建规则
+   - 再去 **月度计划 Monthly Plan** 生成或编辑本月计划
+   - 然后在 **收支记录 Transactions** 添加固定收入、特殊收入和支出
+   - 最后在 **汇总分析 Summary** 和 **仪表盘 Dashboard** 查看结果
+
+### 常用命令
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm test
+```
+
+### 本地数据说明
+
+- 数据默认保存在浏览器本地（IndexedDB / localStorage）
+- 刷新页面后数据会保留
+- 可在 **设置 Settings** 中导出 / 导入 JSON 备份
+- 如果想完全重置本地数据，可以清除浏览器里该站点的本地存储数据
+
+## 下一阶段建议
+
+1. 接入 AI 对话模块与本地 API Key 管理
+2. 补充交易编辑、更多空状态与错误状态
+3. 完善儿童易用性优化（大按钮、图标化、正向反馈文案）
+4. 增加浏览器端到端测试与跨浏览器验证
+5. 评估 PWA、图标包和更多主题素材
