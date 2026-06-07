@@ -145,3 +145,61 @@ export function useMonthlyPlan(month: string = toMonthKey(), refreshKey = 0): Mo
 export function useContracts(refreshKey = 0): Contract[] {
   return useLiveQuery(() => db.contracts.toArray(), [], [refreshKey]);
 }
+
+ // All-Time Aggregate Stats
+
+export interface AllTimeStats {
+  totalIncome: number;
+  totalExpense: number;
+  totalBalance: number;
+  monthCount: number;
+}
+
+export function useAllTimeStats(): AllTimeStats {
+  return useLiveQuery(
+    async () => {
+      const txns = await db.transactions.toArray();
+      const totalIncome = txns.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+      const totalExpense = txns.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+      const monthCount = new Set(txns.map((t) => t.month)).size;
+      return { totalIncome, totalExpense, totalBalance: totalIncome - totalExpense, monthCount };
+    },
+    { totalIncome: 0, totalExpense: 0, totalBalance: 0, monthCount: 0 },
+  );
+}
+
+ // Monthly Trend Hook
+
+export interface MonthlyTrendPoint {
+  month: string;
+  income: number;
+  expense: number;
+  balance: number;
+}
+
+/** Returns the last `count` months (including current) sorted ascending. */
+export function useMonthlyTrend(count = 6): MonthlyTrendPoint[] {
+  return useLiveQuery(
+    async () => {
+      const txns = await db.transactions.toArray();
+      const today = new Date();
+      const monthKeys: string[] = [];
+      for (let i = count - 1; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        monthKeys.push(toMonthKey(d));
+      }
+      const dbMonths = Array.from(new Set(txns.map((t) => t.month)));
+      const allMonths = Array.from(new Set([...monthKeys, ...dbMonths])).sort();
+      const window = allMonths.slice(-count);
+
+      return window.map((month) => {
+        const monthTxns = txns.filter((t) => t.month === month);
+        const income = monthTxns.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+        const expense = monthTxns.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+        return { month, income, expense, balance: income - expense };
+      });
+    },
+    [],
+    [],
+  );
+}

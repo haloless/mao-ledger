@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import BilingualHeading from '../components/BilingualHeading';
+import MonthlyBarChart from '../components/MonthlyBarChart';
 import MonthSelector from '../components/MonthSelector';
 import { formatMonthLabel, toMonthKey } from '../data/helpers';
-import { usePlanVsActual, useMonthlySummary } from '../data/useLedger';
+import { usePlanVsActual, useMonthlySummary, useAllTimeStats, useMonthlyTrend } from '../data/useLedger';
 
 const fmt = (n: number) => `¥${n.toFixed(0)}`;
 
@@ -10,6 +11,8 @@ export default function Summary() {
   const [month, setMonth] = useState(toMonthKey);
   const summary = useMonthlySummary(month);
   const pva = usePlanVsActual(month);
+  const allTime = useAllTimeStats();
+  const trend = useMonthlyTrend(6);
 
   const savingGoal = pva?.savingGoal ?? 0;
   const actualSaving =
@@ -26,6 +29,51 @@ export default function Summary() {
       </p>
 
       <MonthSelector month={month} onChange={setMonth} />
+
+      {/* All-time stats */}
+      <div className="content-card">
+        <h2>
+          累计总览{' '}
+          <small style={{ fontWeight: 400, fontSize: '0.75em', color: 'var(--color-text-muted)' }}>
+            All-Time Totals
+          </small>
+        </h2>
+        <div className="stats-grid" style={{ marginTop: '0.75rem' }}>
+          <div className="stat-card">
+            <span>累计收入</span>
+            <strong style={{ color: 'var(--color-success, green)' }}>{fmt(allTime.totalIncome)}</strong>
+            <small>Total Income</small>
+          </div>
+          <div className="stat-card">
+            <span>累计支出</span>
+            <strong style={{ color: 'var(--color-danger, red)' }}>{fmt(allTime.totalExpense)}</strong>
+            <small>Total Expense</small>
+          </div>
+          <div className="stat-card">
+            <span>净结余</span>
+            <strong style={{ color: allTime.totalBalance >= 0 ? 'var(--color-success, green)' : 'var(--color-danger, red)' }}>
+              {fmt(allTime.totalBalance)}
+            </strong>
+            <small>Net Balance</small>
+          </div>
+          <div className="stat-card">
+            <span>记录月数</span>
+            <strong>{allTime.monthCount}</strong>
+            <small>Months Tracked</small>
+          </div>
+        </div>
+      </div>
+
+      {/* Monthly trend chart */}
+      <div className="content-card">
+        <h2 style={{ margin: '0 0 12px' }}>
+          逐月变化{' '}
+          <small style={{ fontWeight: 400, fontSize: '0.75em', color: 'var(--color-text-muted)' }}>
+            Monthly Trend (last 6 months)
+          </small>
+        </h2>
+        <MonthlyBarChart data={trend} height={220} />
+      </div>
 
       {/* Monthly totals */}
       <div className="content-card">
