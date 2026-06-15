@@ -11,11 +11,12 @@
 ### 2.1 零花钱共识契约
 - 契约字段：
   - 每月金额
-  - 发放方式（一次/分次）
+  - 固定零花钱发放规则（按月固定发放）
   - 推荐储蓄比例
   - 可消费范围
   - 需和家长商量的消费金额阈值
 - 支持版本记录（每次修改保留时间戳）
+- 契约定义的是**固定月度零花钱规则**；压岁钱、奖励、帮忙做事所得等**特殊动态收入**不写入契约，而是在月度收支中单独记录。
 
 ### 2.2 月度使用计划
 - 计划分类（默认）：
@@ -23,22 +24,26 @@
   - 送礼
   - 储蓄
   - 其他
+- 支持新增自定义分类
+- 默认分类不可删除，可允许重命名或排序在后续版本中再评估
 - 支持百分比与金额双视图
 
 ### 2.3 月度实际流入流出
-- 流入：零花钱发放、奖励等
+- 流入：固定零花钱发放、奖励、压岁钱、临时任务收入等
 - 流出：消费支出
 - 每条记录字段：
   - 日期
   - 金额
   - 分类
   - 备注
+- 所有流入都参与当月汇总，并进入“月度计划 vs 实际”对比。
 
 ### 2.4 汇总页面
 - 月度总收入 / 总支出 / 结余
 - 计划 vs 实际对比
 - 储蓄进度
 - 简单复盘提示（可由 AI 生成）
+- 以**自然月**为结算单位：每个月独立结算，不自动滚入下月计划。
 
 ### 2.5 AI 对话助手
 - 场景：
@@ -46,6 +51,18 @@
   - “我最近花钱有什么特点？”
   - “我想买 XXX，合理吗？”
 - AI 输出应偏教育引导，不进行风险或医疗等专业建议
+
+### 2.6 已冻结业务规则
+- **收入模型**：同时支持“按月固定发放的零花钱”和“分次出现的特殊动态收入”。
+- **月度结算**：按自然月独立结算；默认不自动结转到下个月。
+- **计划分类**：允许新增自定义分类；默认分类保留，不允许删除。
+- **计划对比口径**：奖励等额外流入进入当月计划对比，而不是单独排除。
+- **契约版本历史**：契约修改后仅影响新月份；历史月份保留当时的规则快照。
+- **导入合并规则**：
+  - 不同 `id`：直接新增
+  - 相同 `id` 且内容相同：跳过
+  - 相同 `id` 且内容不同：按 `updatedAt` 较新的记录覆盖
+  - 缺少 `updatedAt` 且内容冲突：提示用户选择保留本地或使用导入数据
 
 ## 3. 信息架构（页面）
 
@@ -62,13 +79,20 @@
 建议使用 IndexedDB（可配合 Dexie）：
 
 - `contracts`
-  - `id`, `createdAt`, `monthlyAllowance`, `savingRatio`, `rules`, `threshold`
+  - `id`, `version`, `createdAt`, `updatedAt`, `monthlyAllowance`, `savingRatio`, `rules`, `threshold`
 - `monthlyPlans`
-  - `id`, `month`, `items[]`（分类、计划金额、计划比例）
+  - `id`, `month`, `createdAt`, `updatedAt`, `contractVersion`, `contractSnapshot`, `items[]`（分类、计划金额、计划比例）
 - `transactions`
-  - `id`, `date`, `month`, `type(income|expense)`, `category`, `amount`, `note`
+  - `id`, `date`, `month`, `type(income|expense)`, `incomeSource(fixed|special)`, `category`, `amount`, `note`, `createdAt`, `updatedAt`
+- `monthlySummaries`
+  - `id`, `month`, `planSnapshot`, `contractSnapshot`, `totalIncome`, `totalExpense`, `balance`, `settledAt`
 - `appSettings`
-  - `theme`, `aiProvider`, `aiModel`, `apiKeyMaskedHint`
+  - `theme`, `aiProvider`, `aiModel`, `apiKeyMaskedHint`, `lastExportAt`
+
+说明：
+- `contractSnapshot` 用于保证历史月份不受新契约改动影响。
+- `incomeSource` 用于区分固定零花钱和特殊动态收入，但两者都会进入月度对比。
+- 所有可编辑业务数据都应包含 `updatedAt`，以支持导入合并判定。
 
 ## 5. 技术方案
 
@@ -104,10 +128,17 @@
 ## 8. 导入导出设计
 
 - 导出：下载 `mao-ledger-backup-YYYY-MM.json`
-- 导入：文件校验（JSON 格式、版本号、字段完整性）
+- 导入：文件校验（JSON 格式、版本号、字段完整性、关键时间戳字段）
 - 处理策略：
   - 覆盖导入
-  - 合并导入（按 `id` 去重）
+  - 合并导入（按 `id` 去重，并按 `updatedAt` 解决冲突）
+
+推荐的合并流程：
+1. 先按表和 `id` 建立索引。
+2. 本地不存在的记录，直接写入。
+3. 本地已存在且内容一致的记录，跳过。
+4. 本地已存在且内容不一致的记录，保留 `updatedAt` 更新的一方。
+5. 若冲突记录缺少 `updatedAt`，中止该条自动合并并提示用户手动选择。
 
 ## 9. 非功能要求
 
